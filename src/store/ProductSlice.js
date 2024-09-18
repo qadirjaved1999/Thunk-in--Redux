@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export const STATUSES = Object.freeze({
     SUCCESS: "Success",
@@ -9,7 +9,7 @@ export const STATUSES = Object.freeze({
 const productSlice = createSlice({
     name: 'product',
     initialState: {
-        data: [], 
+        data: [],
         cart: [],
         status: STATUSES.SUCCESS
     },
@@ -21,12 +21,12 @@ const productSlice = createSlice({
         setStatus(state, action) {
             state.status = action.payload;
         },
-        add(state, action){
+        add(state, action) {
             state.cart = [...state.cart, action.payload];
         },
-        remove(state, action){
+        remove(state, action) {
             state.cart = state.cart.filter((item) => item.id !== action.payload);
-        //  return state.cart.filter((item) => item.id !== action.payload)
+            //  return state.cart.filter((item) => item.id !== action.payload)
         }
     }
 })
@@ -35,7 +35,7 @@ export const { setProducts, setStatus, add, remove } = productSlice.actions;
 export default productSlice.reducer
 
 
-//Thunk middleware(Normal method)
+// Thunk middleware(Normal method)
 // 1) Thunk itself a normal function but return a new function.
 export function productsFetched() {
     // Received a two parameters(dispatch, getState) in return function.
@@ -48,9 +48,16 @@ export function productsFetched() {
             dispatch(setProducts(data));
             dispatch(setStatus(STATUSES.SUCCESS));
         } catch (err) {
-          console.log("Data can not fetched", err);
-          dispatch(setStatus(STATUSES.ERROR));
+            console.log("Data can not fetched", err);
+            dispatch(setStatus(STATUSES.ERROR));
         }
     }
 }
 
+// // Thunk method two
+// export const fetchProducts = createAsyncThunk('product/fetch', async () => {
+//     const response = await fetch('https://fakestoreapi.com/products');
+//     const data = await response.json();
+//     return data;
+
+// })
